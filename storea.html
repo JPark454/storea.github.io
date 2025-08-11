@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>STOREA • Steve & Glora</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{ --pink-bg:#f7cce8; --pink-bg-2:#ffe3f2; --ink:#7e0f77; --card:#ffffffcc; --chip:#e9e9ee; --shadow:0 10px 30px rgba(126,15,119,.18); --radius:20px; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{ margin:0; font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background: radial-gradient(1200px 900px at 75% 8%, var(--pink-bg-2) 0, var(--pink-bg) 45%, #f8c6e6 100%); color:var(--ink); }
+
+    /* Right-side vertical nav */
+    .vnav{position:fixed; right:16px; top:50%; transform:translateY(-50%); display:grid; gap:10px; z-index:40}
+    .btn{appearance:none; border:0; background:var(--chip); color:var(--ink); padding:10px 16px; border-radius:999px; cursor:pointer; font-weight:700; letter-spacing:.4px; transition:.18s ease transform, box-shadow .2s ease; box-shadow:0 5px 14px rgba(0,0,0,.07)}
+    .btn:hover{transform:translateY(-2px); box-shadow:0 10px 20px rgba(0,0,0,.1)}
+    .btn.primary{ background: linear-gradient(135deg, #ffebf6, #ffd8f0); border:1px solid rgba(126,15,119,.18)}
+    .btn.ghost{ background:transparent; border:1px dashed rgba(126,15,119,.35)}
+
+    main{max-width:1200px; margin:0 auto; padding:28px 20px 60px}
+    section{display:none; animation:fade .35s ease forwards}
+    section.active{display:block}
+    @keyframes fade{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+
+    /* Home */
+    .home{min-height:calc(100vh - 120px); display:grid; grid-template-columns:1.2fr .8fr; gap:20px; align-items:start}
+    .hero h2{font-size:96px; margin:0; color:#8d1286; letter-spacing:2px}
+    .hero p{margin:8px 0 22px; color:#8b2f86; font-weight:600}
+    .home-tools{display:flex; gap:8px; flex-wrap:wrap}
+
+    /* collage */
+    .collage{position:relative; margin-top:10px; display:grid; grid-template-columns:repeat(8,1fr); grid-auto-rows:90px; gap:10px}
+    .tile{position:relative; border-radius:16px; overflow:hidden; box-shadow:var(--shadow); background:#fff}
+    .tile img{width:100%; height:100%; object-fit:cover; display:block; filter:saturate(1.05)}
+    .tile b{position:absolute; left:10px; bottom:8px; background:rgba(255,255,255,.6); padding:2px 8px; border-radius:999px; font-size:12px}
+    .x{position:absolute; right:6px; top:6px; background:#fff; border:none; border-radius:50%; width:26px; height:26px; cursor:pointer; z-index:2}
+    .span-2{grid-column:span 2}
+    .span-3{grid-column:span 3}
+    .row-2{grid-row:span 2}
+
+    /* Shared cards */
+    .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px}
+    .card{position:relative; background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:14px; border:1px solid rgba(126,15,119,.12)}
+    .card h3{margin:8px 0 2px}
+    .album-cover{border-radius:14px; overflow:hidden; height:150px; background:#fff; display:grid; place-items:center; border:1px solid rgba(126,15,119,.08)}
+    .album-cover img{width:100%; height:100%; object-fit:cover}
+    .meta{font-size:12px; opacity:.8}
+
+    .toolbar{display:flex; align-items:center; justify-content:space-between; margin:8px 0 16px}
+    .toolbar h2{margin:0}
+
+    .modal{position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(246,190,226,.55); backdrop-filter: blur(6px); z-index:50}
+    .modal.open{display:flex}
+    .sheet{width:min(720px,90vw); background:#fff; border-radius:20px; box-shadow:0 30px 80px rgba(126,15,119,.25); overflow:hidden}
+    .sheet header{display:flex; align-items:center; justify-content:space-between; padding:14px 18px; background:linear-gradient(0deg,#ffe5f3, #fff)}
+    .sheet header h3{margin:0; color:var(--ink)}
+    .sheet .body{padding:16px 18px}
+
+    .field{display:grid; gap:6px; margin:10px 0}
+    .field input[type="text"], .field input[type="url"], .field textarea, .field input[type="datetime-local"]{padding:10px 12px; border-radius:12px; border:1px solid rgba(126,15,119,.25); font:inherit; outline:none; background:#fff}
+
+    .photo{position:relative; border-radius:12px; overflow:hidden; border:1px solid rgba(126,15,119,.12)}
+    .photo img{width:100%; height:120px; object-fit:cover; display:block}
+    .photo .x{position:absolute; right:6px; top:6px; background:#fff; border:none; border-radius:50%; width:26px; height:26px; cursor:pointer; z-index:2}
+
+    .x-top{position:absolute; right:10px; top:10px; width:28px; height:28px; display:grid; place-items:center; border-radius:50%; background:#fff; border:1px solid rgba(126,15,119,.25); font-weight:800; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.08); z-index:3}
+    .x-top:hover{transform:scale(1.05)}
+
+    .plan{display:grid; grid-template-rows:auto 1fr auto; gap:6px}
+    .plan .when{font-size:12px; opacity:.8}
+
+    .hint{font-size:12px; opacity:.8}
+
+    .lightbox{position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:99}
+    .lightbox.open{display:flex}
+    .lightbox img{max-width:92vw; max-height:84vh; border-radius:14px; box-shadow:0 40px 80px rgba(0,0,0,.45)}
+
+    #toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:#8d1286; color:#fff; padding:10px 14px; border-radius:999px; box-shadow:0 10px 25px rgba(0,0,0,.2); display:none; z-index:200}
+
+    @media (max-width:900px){ .home{grid-template-columns:1fr} .hero h2{font-size:64px} .vnav{right:8px} main{padding-bottom:120px} }
+  </style>
+</head>
+<body>
+  <!-- Vertical nav -->
+  <nav class="vnav" aria-label="Primary">
+    <button class="btn" type="button" data-goto="#home">Home</button>
+    <button class="btn" type="button" data-goto="#adventures">Adventures</button>
+    <button class="btn" type="button" data-goto="#plans">Plans</button>
+    <button class="btn" type="button" data-goto="#galleria">Galleria</button>
+  </nav>
+
+  <main>
+    <!-- HOME (single title) -->
+    <section id="home" class="home active">
+      <div class="hero">
+        <h2>STOREA</h2>
+        <p>By Steve and Glora</p>
+        <div class="home-tools">
+          <input type="file" id="homeFile" accept="image/*" multiple hidden>
+          <button class="btn primary" id="btnHomeUpload" type="button">Add home photos</button>
+          <button class="btn ghost" id="btnHomeClear" type="button">Clear all</button>
+        </div>
+        <div class="collage" id="homeCollage"></div>
+      </div>
+      <div></div>
+    </section>
+
+    <!-- ADVENTURES / ALBUMS -->
+    <section id="adventures">
+      <div class="toolbar">
+        <h2>Adventures · Albums</h2>
+        <div><button class="btn primary" id="btnNewAlbum" type="button">New album</button></div>
+      </div>
+      <div class="grid" id="albumsGrid"></div>
+    </section>
+
+    <!-- PLANS -->
+    <section id="plans">
+      <div class="toolbar">
+        <h2>Plans</h2>
+        <div><button class="btn primary" id="btnNewPlan" type="button">Create plan</button></div>
+      </div>
+      <div class="grid" id="plansGrid"></div>
+    </section>
+
+    <!-- GALLERIA -->
+    <section id="galleria">
+      <div class="toolbar">
+        <h2>Galleria</h2>
+        <div><button class="btn primary" id="btnAddGalleryPhotos" type="button">Add photos</button></div>
+      </div>
+      <p class="hint">Tip: you can add from files or paste an image URL.</p>
+      <div class="grid photos-grid" id="galleryGrid"></div>
+    </section>
+  </main>
+
+  <!-- Modals (Albums / Plans / URL / Gallery) -->
+  <div class="modal" id="albumModal" aria-hidden="true">
+    <div class="sheet">
+      <header>
+        <h3 id="albumTitle">New album</h3>
+        <div><button class="btn ghost" id="closeAlbumModal" type="button">Close</button></div>
+      </header>
+      <div class="body">
+        <div class="field"><label>Album name</label><input id="albumName" type="text" placeholder="e.g. Weekend in the Mountains"/></div>
+        <div class="field"><label>Description</label><textarea id="albumDesc" rows="2" placeholder="Optional"></textarea></div>
+        <div class="field"><label>Cover image URL (optional)</label><input id="albumCover" type="url" placeholder="https://..."/></div>
+        <div style="display:flex; gap:10px; margin:8px 0 16px">
+          <input type="file" id="albumAddFile" accept="image/*" multiple hidden>
+          <button class="btn" id="albumPickFiles" type="button">Add photo files</button>
+          <button class="btn" id="albumAddUrl" type="button">Add from URL</button>
+          <button class="btn primary" id="saveAlbum" type="button">Save album</button>
+        </div>
+        <div class="photos-grid" id="albumPhotos"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="planModal" aria-hidden="true">
+    <div class="sheet">
+      <header>
+        <h3>Create plan</h3>
+        <div><button class="btn ghost" id="closePlanModal" type="button">Close</button></div>
+      </header>
+      <div class="body">
+        <div class="field"><label>Title</label><input type="text" id="planTitle" placeholder="e.g. Dinner & a drive"/></div>
+        <div class="field"><label>Date & time</label><input type="datetime-local" id="planWhen"></div>
+        <div class="field"><label>Location</label><input type="text" id="planWhere" placeholder="Where to?"/></div>
+        <div class="field"><label>Notes</label><textarea id="planNotes" rows="3" placeholder="Anything else?"></textarea></div>
+        <div style="display:flex; gap:10px; margin-top:6px"><button class="btn primary" id="savePlan" type="button">Save plan</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="urlModal" aria-hidden="true">
+    <div class="sheet">
+      <header>
+        <h3>Add image from URL</h3>
+        <div><button class="btn ghost" id="closeUrlModal" type="button">Close</button></div>
+      </header>
+      <div class="body">
+        <div class="field"><input type="url" id="imageUrlInput" placeholder="Paste an image URL (https://...)"/></div>
+        <div style="display:flex; gap:10px"><button class="btn primary" id="confirmAddUrl" type="button">Add</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="galleryModal" aria-hidden="true">
+    <div class="sheet">
+      <header>
+        <h3>Add photos to Galleria</h3>
+        <div><button class="btn ghost" id="closeGalleryModal" type="button">Close</button></div>
+      </header>
+      <div class="body">
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+          <input type="file" id="galleryFile" accept="image/*" multiple hidden>
+          <button class="btn" id="galleryPickFiles" type="button">Pick files</button>
+          <button class="btn" id="galleryAddUrl" type="button">Add from URL</button>
+          <span class="hint">You can select multiple files.</span>
+        </div>
+        <div class="photos-grid" id="galleryPreview" style="margin-top:10px"></div>
+        <div style="margin-top:6px"><button class="btn primary" id="commitGallery" type="button">Add to Galleria</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox & Toast -->
+  <div class="lightbox" id="lightbox"><img alt="preview" id="lightboxImg" /><div style="position:fixed; top:18px; right:18px"><button class="btn" id="closeLightbox" type="button">Close</button></div></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+  // ---------- Utils ----------
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => [...document.querySelectorAll(sel)];
+  const uid = () => Math.random().toString(36).slice(2,10);
+
+  // ---------- Storage ----------
+  const ALBUMS_KEY = 'storea_albums_v2';
+  const GALLERY_KEY = 'storea_gallery_v2';
+  const PLANS_KEY = 'storea_plans_v1';
+  const SEEDED_KEY = 'storea_seeded_v2';
+  const HOME_KEY = 'storea_home_images_session_v1';
+
+  const storage = {
+    get(key, fallback){ try{ return JSON.parse(localStorage.getItem(key)) ?? fallback }catch{ return fallback } },
+    set(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); } catch(err){ if(err && err.name==='QuotaExceededError'){ toast('Storage full. Delete some photos or plans.'); } } }
+  }
+  function toast(msg){ const t=$('#toast'); t.textContent=msg; t.style.display='block'; clearTimeout(toast._t); toast._t=setTimeout(()=>t.style.display='none', 3000); }
+
+  // session helpers for home images
+  const sget = (k,f)=>{ try{ return JSON.parse(sessionStorage.getItem(k)) ?? f }catch{ return f } }
+  const sset = (k,v)=>{ sessionStorage.setItem(k, JSON.stringify(v)) }
+
+  // ---------- Image helpers ----------
+  function imgToDataUrl(img, maxSize=1280, quality=0.72){ const w=img.naturalWidth||img.width, h=img.naturalHeight||img.height; const s=Math.min(1,maxSize/Math.max(w,h)); const cw=Math.max(1,Math.round(w*s)), ch=Math.max(1,Math.round(h*s)); const c=document.createElement('canvas'); c.width=cw; c.height=ch; c.getContext('2d').drawImage(img,0,0,cw,ch); return c.toDataURL('image/jpeg', quality); }
+  async function fileToCompressedDataUrl(file){ const url = URL.createObjectURL(file); const img = new Image(); img.src = url; await img.decode(); const out = imgToDataUrl(img, 1280, 0.72); URL.revokeObjectURL(url); return out; }
+
+  // ---------- Home collage (session only) ----------
+  let homeImages = sget(HOME_KEY, []);
+  function placeholder(label){ const w=600,h=400,c=document.createElement('canvas'); c.width=w; c.height=h; const g=c.getContext('2d'); const grad=g.createLinearGradient(0,0,w,h); grad.addColorStop(0,'#ffe8f4'); grad.addColorStop(1,'#ffd1ef'); g.fillStyle=grad; g.fillRect(0,0,w,h); g.fillStyle='#8d1286'; g.globalAlpha=.23; for(let i=0;i<10;i++){ g.beginPath(); g.arc(Math.random()*w,Math.random()*h,20+Math.random()*60,0,Math.PI*2); g.fill(); } g.globalAlpha=1; g.font='700 32px Poppins'; g.fillStyle='#8d1286'; g.textAlign='center'; g.textBaseline='middle'; g.fillText(label||'Photo', w/2, h/2); return c.toDataURL('image/jpeg', .8); }
+  function renderHomeCollage(){ const grid=$('#homeCollage'); grid.innerHTML=''; const cls=i=> i%4===0?'span-3 row-2': i%4===1?'span-2': i%4===2?'span-2':'span-3'; homeImages.forEach((p,i)=>{ const tile=document.createElement('div'); tile.className='tile '+cls(i); tile.dataset.id=p.id; const img=document.createElement('img'); img.src=p.url; img.alt=p.label||''; img.onerror=()=>{ img.src=placeholder(p.label) }; const cap=document.createElement('b'); cap.textContent=p.label||''; const btn=document.createElement('button'); btn.className='x'; btn.type='button'; btn.textContent='×'; btn.title='Remove'; btn.addEventListener('click', ev=>{ ev.stopPropagation(); const id=tile.dataset.id; homeImages=homeImages.filter(x=>String(x.id)!==String(id)); sset(HOME_KEY, homeImages); tile.remove(); }); tile.appendChild(img); tile.appendChild(btn); tile.appendChild(cap); grid.appendChild(tile); }); }
+  $('#btnHomeUpload').onclick = ()=> $('#homeFile').click();
+  $('#homeFile').addEventListener('change', async e=>{ const add=[]; for(const f of e.target.files){ const url=await fileToCompressedDataUrl(f); add.push({id:uid(), url, label:f.name.replace(/\.[^.]+$/,'')}); } homeImages=homeImages.concat(add).slice(-18); sset(HOME_KEY, homeImages); renderHomeCollage(); e.target.value=''; });
+  $('#btnHomeClear').onclick = ()=>{ if(confirm('Remove all home photos?')){ homeImages=[]; sset(HOME_KEY, homeImages); renderHomeCollage(); } }
+
+  // ---------- Albums (Adventures) ----------
+  function galleryMap(){ const g = storage.get(GALLERY_KEY, []); const map={}; g.forEach(x=>map[x.id]=x); return map; }
+  function renderAlbums(){ const grid=$('#albumsGrid'); grid.innerHTML=''; const albums=storage.get(ALBUMS_KEY, []); const gmap=galleryMap(); if(!albums.length){ grid.innerHTML='<p class="hint">No albums yet. Create your first one!</p>'; return } albums.forEach(a=>{ const coverUrl=a.coverId?(gmap[a.coverId]?.url||''):(gmap[a.photoIds?.[0]]?.url||''); const card=document.createElement('div'); card.className='card'; card.dataset.id=a.id; card.innerHTML=`<button class="x-top" data-del-album="${a.id}" title="Delete">×</button><div class="album-cover">${coverUrl?`<img src="${coverUrl}" alt="${a.name}">`:'<div class="hint">No cover</div>'}</div><h3>${a.name}</h3><div class="meta">${a.desc||''}</div><div class="meta">${a.photoIds?.length||0} photo(s)</div><div style="display:flex; gap:8px; margin-top:8px"><button class="btn" data-open-album="${a.id}" type="button">Open</button></div>`; grid.appendChild(card); }) }
+  // cross delete + open via delegation
+  $('#albumsGrid').addEventListener('click', (e)=>{
+    const del = e.target.closest('[data-del-album]');
+    if(del){ e.stopPropagation(); if(confirm('Are you sure you want to delete this babe?')){ const id=del.dataset.delAlbum; const next = storage.get(ALBUMS_KEY, []).filter(a=>String(a.id)!==String(id)); storage.set(ALBUMS_KEY,next); const card=del.closest('.card'); if(card) card.remove(); if(!$('#albumsGrid').children.length) renderAlbums(); } return; }
+    const openBtn = e.target.closest('[data-open-album]');
+    if(openBtn){ openAlbum(openBtn.dataset.openAlbum); }
+  });
+
+  let currentAlbumId=null; let tempAlbumPhotoIds=[];
+  function openAlbum(id){ const albums=storage.get(ALBUMS_KEY, []); const album=albums.find(x=>x.id===id)||{id:id||uid(), name:'', desc:'', coverId:'', photoIds:[]}; currentAlbumId=album.id; tempAlbumPhotoIds=[...(album.photoIds||[])]; $('#albumTitle').textContent=album.name||'New album'; $('#albumName').value=album.name||''; $('#albumDesc').value=album.desc||''; $('#albumCover').value=''; renderAlbumPhotos(); $('#albumModal').classList.add('open'); }
+  function renderAlbumPhotos(){ const grid=$('#albumPhotos'); grid.innerHTML=''; const gmap=galleryMap(); tempAlbumPhotoIds.forEach(id=>{ const p=gmap[id]; if(!p) return; const div=document.createElement('div'); div.className='photo'; div.innerHTML=`<img src="${p.url}" alt=""><button class="x" title="Remove" type="button">×</button>`; div.querySelector('.x').onclick=ev=>{ ev.stopPropagation(); tempAlbumPhotoIds=tempAlbumPhotoIds.filter(x=>x!==id); renderAlbumPhotos(); }; grid.appendChild(div); }); }
+  function saveAlbum(){ const albums=storage.get(ALBUMS_KEY, []); const i=albums.findIndex(x=>x.id===currentAlbumId); const manualCover=$('#albumCover').value.trim(); const coverId=manualCover?null:(tempAlbumPhotoIds[0]||null); const data={ id:currentAlbumId, name:$('#albumName').value.trim()||'Untitled album', desc:$('#albumDesc').value.trim(), coverId, photoIds:[...tempAlbumPhotoIds] }; if(i>=0) albums[i]=data; else albums.push(data); storage.set(ALBUMS_KEY, albums); $('#albumModal').classList.remove('open'); renderAlbums(); }
+  $('#btnNewAlbum').onclick = ()=> openAlbum(uid());
+  $('#closeAlbumModal').onclick = ()=> $('#albumModal').classList.remove('open');
+  $('#saveAlbum').onclick = saveAlbum;
+  $('#albumPickFiles').onclick = ()=> $('#albumAddFile').click();
+  $('#albumAddFile').addEventListener('change', async e=>{ const g=storage.get(GALLERY_KEY, []); for(const f of e.target.files){ const url=await fileToCompressedDataUrl(f); const id=uid(); g.push({id, url, caption:f.name, ts:Date.now(), src:'data'}); tempAlbumPhotoIds.push(id);} storage.set(GALLERY_KEY,g); renderAlbumPhotos(); e.target.value=''; })
+  let urlTarget=null; $('#albumAddUrl').onclick = ()=>{ urlTarget='album'; $('#urlModal').classList.add('open'); $('#imageUrlInput').value=''; setTimeout(()=>$('#imageUrlInput').focus(),50) }
+  $('#closeUrlModal').onclick = ()=> $('#urlModal').classList.remove('open');
+  $('#confirmAddUrl').onclick = ()=>{ const u=$('#imageUrlInput').value.trim(); if(!u) return; if(urlTarget==='album'){ const g=storage.get(GALLERY_KEY, []); const id=uid(); g.push({id, url:u, caption:'', ts:Date.now(), src:'ext'}); storage.set(GALLERY_KEY,g); tempAlbumPhotoIds.push(id); renderAlbumPhotos(); } if(urlTarget==='gallery'){ galleryPreview.push({id:uid(), url:u, caption:'', ts:Date.now(), src:'ext'}); renderGalleryPreview(); } $('#urlModal').classList.remove('open'); }
+
+  // ---------- Plans (X delete + prompt) ----------
+  function renderPlans(){ const grid=$('#plansGrid'); grid.innerHTML=''; const plans=storage.get(PLANS_KEY, []); if(!plans.length){ grid.innerHTML='<p class="hint">No plans yet. Create one!</p>'; return } plans.sort((a,b)=> (a.when||'').localeCompare(b.when||'')); plans.forEach(p=>{ const card=document.createElement('div'); card.className='card plan'; card.dataset.id=p.id; const date=p.when?new Date(p.when):null; card.innerHTML=`<button class="x-top" data-del-plan="${p.id}" title="Delete">×</button><h3>${p.title}</h3><div class="when">${date?date.toLocaleString():''} · ${p.where||''}</div><div class="meta">${p.notes||''}</div><div style="display:flex; gap:8px; margin-top:8px"><button class="btn" data-edit-plan="${p.id}" type="button">Edit</button></div>`; grid.appendChild(card); }) }
+  $('#plansGrid').addEventListener('click', (e)=>{
+    const del = e.target.closest('[data-del-plan]');
+    if(del){ e.stopPropagation(); if(confirm('Are you sure you want to delete this babe?')){ const id=del.dataset.delPlan; const next = storage.get(PLANS_KEY, []).filter(pl=>String(pl.id)!==String(id)); storage.set(PLANS_KEY,next); const card=del.closest('.card'); if(card) card.remove(); if(!$('#plansGrid').children.length) renderPlans(); } return; }
+    const edit = e.target.closest('[data-edit-plan]'); if(edit){ const plans=storage.get(PLANS_KEY, []); const p=plans.find(x=>String(x.id)===String(edit.dataset.editPlan)); openPlanModal(p||null); }
+  });
+  function openPlanModal(plan){ $('#planTitle').value=plan?.title||''; $('#planWhen').value=plan?.when?plan.when.slice(0,16):''; $('#planWhere').value=plan?.where||''; $('#planNotes').value=plan?.notes||''; $('#planModal').dataset.editing=plan?.id||''; $('#planModal').classList.add('open'); }
+  $('#btnNewPlan').onclick = ()=> openPlanModal(null);
+  $('#closePlanModal').onclick = ()=> $('#planModal').classList.remove('open');
+  $('#savePlan').onclick = ()=>{ const plans=storage.get(PLANS_KEY, []); const id=$('#planModal').dataset.editing || uid(); const p={ id, title:$('#planTitle').value.trim()||'Untitled plan', when: $('#planWhen').value? new Date($('#planWhen').value).toISOString() : '', where: $('#planWhere').value.trim(), notes: $('#planNotes').value.trim(), created: Date.now() }; const i=plans.findIndex(x=>String(x.id)===String(id)); if(i>=0) plans[i]=p; else plans.push(p); storage.set(PLANS_KEY, plans); $('#planModal').classList.remove('open'); renderPlans(); };
+
+  // ---------- Galleria ----------
+  function renderGalleria(){ const grid=$('#galleryGrid'); grid.innerHTML=''; const pics=storage.get(GALLERY_KEY, []); if(!pics.length){ grid.innerHTML='<p class="hint">No photos yet. Add some!</p>'; return } pics.forEach(p=>{ const div=document.createElement('div'); div.className='photo'; div.dataset.id=p.id; div.innerHTML=`<button class="x" title="Remove" data-del-id="${p.id}" type="button">×</button><img loading="lazy" src="${p.url}">`; grid.appendChild(div); }) }
+  $('#galleryGrid').addEventListener('click', e=>{ const del=e.target.closest('[data-del-id]'); if(del){ e.stopPropagation(); const id=del.dataset.delId; const pics=storage.get(GALLERY_KEY, []); storage.set(GALLERY_KEY, pics.filter(x=>String(x.id)!==String(id))); const tile=e.target.closest('.photo'); if(tile) tile.remove(); return; } const img=e.target.closest('img'); if(img){ openLightbox(img.src); } });
+  let galleryPreview=[]; function renderGalleryPreview(){ const grid=$('#galleryPreview'); grid.innerHTML=''; galleryPreview.forEach(p=>{ const d=document.createElement('div'); d.className='photo'; d.innerHTML=`<img src="${p.url}"><button class='x' type='button'>×</button>`; d.querySelector('.x').onclick=e=>{ e.stopPropagation(); galleryPreview=galleryPreview.filter(x=>x.id!==p.id); renderGalleryPreview(); }; grid.appendChild(d); }) }
+  $('#btnAddGalleryPhotos').onclick = ()=>{ galleryPreview=[]; $('#galleryPreview').innerHTML=''; $('#galleryModal').classList.add('open'); }
+  $('#closeGalleryModal').onclick = ()=> $('#galleryModal').classList.remove('open');
+  $('#galleryPickFiles').onclick = ()=> $('#galleryFile').click();
+  $('#galleryFile').addEventListener('change', async e=>{ for(const f of e.target.files){ const url=await fileToCompressedDataUrl(f); galleryPreview.push({id:uid(), url, caption:f.name, ts:Date.now(), src:'data'}); } renderGalleryPreview(); e.target.value=''; })
+  $('#galleryAddUrl').onclick = ()=>{ urlTarget='gallery'; $('#urlModal').classList.add('open'); $('#imageUrlInput').value=''; setTimeout(()=>$('#imageUrlInput').focus(), 50) }
+  $('#commitGallery').onclick = ()=>{ const pics=storage.get(GALLERY_KEY, []); storage.set(GALLERY_KEY, pics.concat(galleryPreview)); $('#galleryModal').classList.remove('open'); renderGalleria(); }
+
+  // Lightbox
+  function openLightbox(src){ $('#lightboxImg').src=src; $('#lightbox').classList.add('open'); }
+  $('#closeLightbox').onclick = ()=> $('#lightbox').classList.remove('open');
+  $('#lightbox').addEventListener('click', e=>{ if(e.target.id==='lightbox') $('#lightbox').classList.remove('open'); })
+  window.addEventListener('keydown', e=>{ if(e.key==='Escape') $('#lightbox').classList.remove('open'); })
+
+  // Seed minimal data
+  function seedIfNeeded(){ if(localStorage.getItem(SEEDED_KEY)) return; const plans=[ { id: uid(), title:'Mini golf + burgers', when:new Date(Date.now()+86400000).toISOString(), where:'Thornleigh Mini Golf', notes:'Loser shouts 🍔', created:Date.now() }, { id: uid(), title:'Cruise in the CL9', when:new Date(Date.now()+2*86400000).toISOString(), where:'RNP loop', notes:'Golden hour photos', created:Date.now() } ]; localStorage.setItem(PLANS_KEY, JSON.stringify(plans)); localStorage.setItem(SEEDED_KEY, JSON.stringify(true)); }
+
+  // navigation
+  $$('[data-goto]').forEach(b=>b.addEventListener('click', e=>{ const hash=e.currentTarget.dataset.goto; location.hash=hash; $$('main section').forEach(s=>s.classList.remove('active')); const sec=document.querySelector(hash); if(sec) sec.classList.add('active'); }));
+
+  // Boot
+  seedIfNeeded();
+  renderHomeCollage();
+  renderAlbums();
+  renderPlans();
+  renderGalleria();
+  </script>
+</body>
+</html>
