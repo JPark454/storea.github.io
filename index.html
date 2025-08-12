@@ -299,14 +299,23 @@
   $('#lightbox').addEventListener('click', e=>{ if(e.target.id==='lightbox') $('#lightbox').classList.remove('open'); })
   window.addEventListener('keydown', e=>{ if(e.key==='Escape') $('#lightbox').classList.remove('open'); })
 
-  // Seed minimal data
-  function seedIfNeeded(){ if(localStorage.getItem(SEEDED_KEY)) return; const plans=[ { id: uid(), title:'Mini golf + burgers', when:new Date(Date.now()+86400000).toISOString(), where:'Thornleigh Mini Golf', notes:'Loser shouts 🍔', created:Date.now() }, { id: uid(), title:'Cruise in the CL9', when:new Date(Date.now()+2*86400000).toISOString(), where:'RNP loop', notes:'Golden hour photos', created:Date.now() } ]; localStorage.setItem(PLANS_KEY, JSON.stringify(plans)); localStorage.setItem(SEEDED_KEY, JSON.stringify(true)); }
 
   // navigation
   $$('[data-goto]').forEach(b=>b.addEventListener('click', e=>{ const hash=e.currentTarget.dataset.goto; location.hash=hash; $$('main section').forEach(s=>s.classList.remove('active')); const sec=document.querySelector(hash); if(sec) sec.classList.add('active'); }));
 
   // Boot
-  seedIfNeeded();
+  // One-time: remove old demo content if it was ever seeded
+    (function removeDemoDataOnce(){
+    const SEEDED_KEY = 'storea_seeded_v2';
+    const PLANS_KEY  = 'storea_plans_v1';
+    const ALBUMS_KEY = 'storea_albums_v2';
+    if (localStorage.getItem(SEEDED_KEY)) {
+        localStorage.removeItem(PLANS_KEY);   // clears default plans
+        localStorage.removeItem(ALBUMS_KEY);  // clears any demo albums if present
+        localStorage.removeItem(SEEDED_KEY);  // remove the flag so this runs once
+    }
+    })();
+  
   renderHomeCollage();
   renderAlbums();
   renderPlans();
@@ -314,3 +323,4 @@
   </script>
 </body>
 </html>
+
